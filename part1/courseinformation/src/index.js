@@ -7,11 +7,13 @@ const Content = ({ content}) => {
     return(
         <>
         {
-            content.map( (c, index) => <p key={index}>{c.part} {c.exercises}</p>)
+            content.map( (c, index) => <Part key={index} title={c.part} exercises={c.exercises} />)
         }
         </>
     );
 }
+
+const Part = ({ title, exercises }) => <p>{title} {exercises}</p>
 
 const Total = ( { total }) => <p>Number of exercises { total }</p>
 
