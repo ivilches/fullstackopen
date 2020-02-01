@@ -35,17 +35,27 @@ const Statistics = ({ good, neutral, bad }) => {
     return (
         <div>
             {title}
-            <Statistic text="good" value={good} />
-            <Statistic text="neutral" value={neutral} />
-            <Statistic text="bad" value={bad} />
-            <Statistic text="all" value={getTotal()} />
-            <Statistic text="average" value={getAverage()} />
-            <Statistic text="positive" value={getPositivePercentage()} />
+            <table>
+                <tbody>
+                    <Statistic text="good" value={good} />
+                    <Statistic text="neutral" value={neutral} />
+                    <Statistic text="bad" value={bad} />
+                    <Statistic text="all" value={getTotal()} />
+                    <Statistic text="average" value={getAverage()} />
+                    <Statistic text="positive" value={getPositivePercentage()} />
+                </tbody>
+            </table>
         </div>
     )
 }
 
-const Statistic = ({text, value}) => <p>{text} {value}</p>
+const Statistic = ({ text, value }) => {
+    return (
+        <tr>
+            <td>{text} {value}</td>
+        </tr>
+    )
+}
 
 const App = () => {
     // save clicks of each button to own state
