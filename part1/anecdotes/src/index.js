@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 
+const Header = ({ text }) => <h1>{text}</h1>
+
 const Button = ({ text, onClick }) => <button onClick={onClick}>{text}</button>
 
 const Anecdote = ({ text, votes }) => {
   return (
     <>
       <p>{text}</p>
-      <p>has {votes || 0} votes</p>
+      <p>has {votes} votes</p>
     </>
   )
 }
@@ -26,18 +28,25 @@ const App = (props) => {
     setVotes([...votes]);
   }
 
+  const mostVotedAnecdoteIndex = votes.indexOf(Math.max(...votes));
+
   return (
     <div>
-      <Anecdote 
-        text={props.anecdotes[selected]} 
-        votes={votes[selected]}/>
+      <Header text="Anecdote of the day" />
+      <Anecdote
+        text={props.anecdotes[selected]}
+        votes={votes[selected]} />
       <div>
-      <Button
+        <Button
           text="vote"
           onClick={voteSelectedAnecdote} />
         <Button
           text="next anecdote"
           onClick={setRandomAnecdote} />
+        <Header text="Anecdote with most votes" />
+        <Anecdote 
+          text={props.anecdotes[mostVotedAnecdoteIndex]} 
+          votes={votes[mostVotedAnecdoteIndex]} />
       </div>
     </div>
   )
