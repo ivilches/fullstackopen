@@ -21,9 +21,20 @@ const Statistics = ({ good, neutral, bad }) => {
     const getAverage = () => good - bad;
     const getPositivePercentage = () => (good / (getTotal() || 1)) * 100;
 
+    const title = <Title text="Statistics" />;
+
+    if (getTotal() === 0) {
+        return (
+            <div>
+                {title}
+                No feedback given
+            </div>
+        )
+    }
+
     return (
         <div>
-            <Title text="Statistics" />
+            {title}
             <p>good {good}</p>
             <p>neutral {neutral}</p>
             <p>bad  {bad}</p>
