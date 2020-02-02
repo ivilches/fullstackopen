@@ -1,13 +1,8 @@
 import React, { useState } from 'react'
+import SearchFilter from './components/SearchFilter';
+import EntryForm from './components/EntryForm';
+import EntryList from './components/EntryList';
 const shortid = require('shortid');
-
-const Entry = ({ person }) => {
-  return (
-    <li>
-      {person.name} - {person.number}
-    </li>
-  )
-}
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -22,7 +17,7 @@ const App = () => {
 
   const personsToShow = persons.filter(
     p => p.name.toLowerCase()
-                .includes(searchTerm.toLowerCase()));
+      .includes(searchTerm.toLowerCase()));
 
   const existsNameInPhoneBook = (name) => persons.some(p => p.name === name.trim());
 
@@ -63,29 +58,18 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-        filter shown with <input value={searchTerm} onChange={handleSearchTermChange} />
-      </div>
-      <form onSubmit={handleSubmitForm}>
-        <div>
-          name: <input value={newName} onChange={handleNewNameChange} />
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={handleNewNumberChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <SearchFilter searchTerm={searchTerm} onChange={handleSearchTermChange} />
+      <EntryForm 
+        onSubmit={handleSubmitForm}
+        newName={newName}
+        onChangeNewName={handleNewNameChange}
+        newNumber={newNumber}
+        onChangeNewNumber={handleNewNumberChange}
+      />
       <h2>Numbers</h2>
-      <ul>
-        {
-          personsToShow.map(p =>
-            <Entry key={p.id} person={p} />)
-        }
-      </ul>
+      <EntryList persons={personsToShow} />
     </div>
   )
 }
 
-export default App
+export default App;
