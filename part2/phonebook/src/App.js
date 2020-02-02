@@ -4,22 +4,27 @@ const shortid = require('shortid');
 const Entry = ({ person }) => {
   return (
     <li>
-      {person.name}
+      {person.name} - {person.number}
     </li>
   )
 }
 
 const App = () => {
-  const [ persons, setPersons] = useState([
-    { name: 'Arto Hellas', id: shortid.generate() }
-  ]) 
-  const [ newName, setNewName ] = useState('')
+  const [persons, setPersons] = useState([
+    {
+      id: shortid.generate(),
+      name: 'Arto Hellas',
+      number: '1234'
+    }
+  ]);
+  const [newName, setNewName] = useState('');
+  const [newNumber, setNewNumber] = useState('');
 
   const existsNameInPhoneBook = (name) => persons.some(p => p.name === name.trim());
 
   const handleSubmitForm = (event) => {
     event.preventDefault();
-    if(newName.trim() === '') {
+    if (newName.trim() === '') {
       return;
     }
 
@@ -29,15 +34,21 @@ const App = () => {
     }
 
     setPersons(persons.concat({
+      id: shortid.generate(),
       name: newName,
-      id: shortid.generate()
+      number: newNumber,
     }));
 
     setNewName('');
+    setNewNumber('');
   }
 
   const handleNewNameChange = (event) => {
     setNewName(event.target.value);
+  }
+
+  const handleNewNumberChange = (event) => {
+    setNewNumber(event.target.value);
   }
 
   return (
@@ -48,14 +59,17 @@ const App = () => {
           name: <input value={newName} onChange={handleNewNameChange} />
         </div>
         <div>
+          number: <input value={newNumber} onChange={handleNewNumberChange} />
+        </div>
+        <div>
           <button type="submit">add</button>
         </div>
       </form>
       <h2>Numbers</h2>
       <ul>
         {
-          persons.map(p => 
-          <Entry key={p.id} person={p} />)
+          persons.map(p =>
+            <Entry key={p.id} person={p} />)
         }
       </ul>
     </div>
