@@ -15,9 +15,16 @@ const App = () => {
   ]) 
   const [ newName, setNewName ] = useState('')
 
+  const existsNameInPhoneBook = (name) => persons.some(p => p.name === name.trim());
+
   const handleSubmitForm = (event) => {
     event.preventDefault();
     if(newName.trim() === '') {
+      return;
+    }
+
+    if (existsNameInPhoneBook(newName)) {
+      alert(`${newName} is already added to phonebook`);
       return;
     }
 
