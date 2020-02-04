@@ -58,7 +58,6 @@ const App = () => {
   }
 
   const handleSearchTermChange = (event) => {
-    console.log('evet', event.target.value);
     setSearchTerm(event.target.value);
   }
 
