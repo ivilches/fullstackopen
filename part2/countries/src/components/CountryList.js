@@ -1,7 +1,6 @@
 import React from 'react';
 
-import CountrySimple from './CountrySimple';
-import CountryExpanded from './CountryExpanded';
+import Country from './Country';
 
 const CountryList = ({ countries }) => {
   if (countries.length > 10) {
@@ -11,15 +10,19 @@ const CountryList = ({ countries }) => {
   }
 
   if (countries.length === 1) {
-    return <CountryExpanded country={countries[0]} />
+    return <Country
+            country={countries[0]}
+            expanded={true}
+            />
   }
 
   return (
     <div>
       {
-        countries.map(c => <CountrySimple 
+        countries.map(c => <Country
                             key={c.alpha2Code} 
-                            country={c} 
+                            country={c}
+                            expanded={false}
                             />)
       }
     </div>
