@@ -34,8 +34,16 @@ const App = () => {
       const entriesWithoutUpdatedOne = entries.filter(e => e.id !== entry.id);
       setEntries(entriesWithoutUpdatedOne.concat(entry));
     } catch (error) {
+      const errorMessage = (error?.response?.status === 404)
+        ? `Information of ${entry.name} has already been removed from the server`
+        : 'An error has occured';
+
+      showMessage({
+        text: errorMessage,
+        isError: true,
+      });
       console.error(error);
-    }    
+    }
   }
 
   const showMessage = (mesageToShow) => {
@@ -53,8 +61,8 @@ const App = () => {
 
     if (existsNameInPhoneBook(newName)) {
       if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
-        const entry = entries.find(e => e.name === newName);        
-        updateEntry({...entry, number: newNumber});
+        const entry = entries.find(e => e.name === newName);
+        updateEntry({ ...entry, number: newNumber });
         return;
       }
     }
@@ -65,10 +73,22 @@ const App = () => {
       number: newNumber,
     };
 
-    await entriesService.create(newEntry);
-    setEntries(entries.concat(newEntry));
-    showMessage(`Added ${newEntry.name}`);
-    
+    try {
+      await entriesService.create(newEntry);
+      setEntries(entries.concat(newEntry));
+      showMessage({
+        text: `Added ${newEntry.name}`,
+        isError: false,
+      });
+    } catch (error) {
+      showMessage({
+        text: 'An error has occured',
+        isError: true,
+      });
+      console.error(error);
+    }
+
+
     setNewName('');
     setNewNumber('');
   }
@@ -91,12 +111,23 @@ const App = () => {
     }
 
     try {
-      await entriesService.remove(entry.id);  
+      await entriesService.remove(entry.id);
       setEntries(entries.filter(e => e.id !== entry.id));
+      showMessage({
+        text: `Deleted ${entry.name}`,
+        isError: false,
+      });
     } catch (error) {
-      if (error?.response?.status !== 404) {
-        alert('an error has occured');
-      }      
+      if (error?.response?.status === 404) {
+        setEntries(entries.filter(e => e.id !== entry.id));
+      }
+      else {
+        showMessage({
+          text: 'An error has occured',
+          isError: true,
+        });
+      }
+
       console.error(error);
     }
   }
@@ -114,7 +145,7 @@ const App = () => {
         onChangeNewNumber={handleNewNumberChange}
       />
       <h2>Numbers</h2>
-      <EntryList 
+      <EntryList
         persons={entriesToShow}
         deleteAction={deleteEntry}
       />
