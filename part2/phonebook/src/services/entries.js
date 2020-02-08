@@ -10,8 +10,12 @@ const getAll  = async () => {
 const create = async (entry) =>
   await axios.post(baseUrl, entry);
 
+const remove = async (id) =>
+  await axios.delete(`${baseUrl}/${id}`);
+
 export default {
   getAll,
   create,
+  remove,
 }
   

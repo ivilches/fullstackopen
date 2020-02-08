@@ -4,6 +4,7 @@ import shortid from 'shortid';
 import SearchFilter from './components/SearchFilter';
 import EntryForm from './components/EntryForm';
 import EntryList from './components/EntryList';
+import Entry from './components/Entry';
 import entriesService from './services/entries';
 
 
@@ -63,11 +64,27 @@ const App = () => {
     setSearchTerm(event.target.value);
   }
 
+  const deleteEntry = (entry) => async () => {
+    if (!window.confirm(`Delete`)) {
+      return;
+    }
+
+    try {
+      await entriesService.remove(entry.id);  
+      setEntries(entries.filter(e => e.id !== entry.id));
+    } catch (error) {
+      if (error?.response?.status !== 404) {
+        alert('an error has occured');
+      }      
+      console.error(error);
+    }
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
       <SearchFilter searchTerm={searchTerm} onChange={handleSearchTermChange} />
-      <EntryForm 
+      <EntryForm
         onSubmit={handleSubmitForm}
         newName={newName}
         onChangeNewName={handleNewNameChange}
@@ -75,7 +92,10 @@ const App = () => {
         onChangeNewNumber={handleNewNumberChange}
       />
       <h2>Numbers</h2>
-      <EntryList persons={entriesToShow} />
+      <EntryList 
+        persons={entriesToShow}
+        deleteAction={deleteEntry}
+      />
     </div>
   )
 }
