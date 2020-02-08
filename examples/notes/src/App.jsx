@@ -37,7 +37,7 @@ const App = () => {
   }
 
   const showError = (message) => {
-    setError(message);
+    setErrorMessage(message);
     setTimeout(() => {
       setErrorMessage(null);
     }, 2000);

@@ -4,8 +4,8 @@ import shortid from 'shortid';
 import SearchFilter from './components/SearchFilter';
 import EntryForm from './components/EntryForm';
 import EntryList from './components/EntryList';
+import Notification from './components/Notification';
 import entriesService from './services/entries';
-
 
 const App = () => {
   const [entries, setEntries] = useState([]);
@@ -20,6 +20,7 @@ const App = () => {
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [message, setMessage] = useState(null);
 
   const entriesToShow = entries.filter(
     p => p.name.toLowerCase()
@@ -35,6 +36,13 @@ const App = () => {
     } catch (error) {
       console.error(error);
     }    
+  }
+
+  const showMessage = (mesageToShow) => {
+    setMessage(mesageToShow);
+    setTimeout(() => {
+      setMessage(null);
+    }, 5000)
   }
 
   const handleSubmitForm = async (event) => {
@@ -59,7 +67,8 @@ const App = () => {
 
     await entriesService.create(newEntry);
     setEntries(entries.concat(newEntry));
-
+    showMessage(`Added ${newEntry.name}`);
+    
     setNewName('');
     setNewNumber('');
   }
@@ -95,6 +104,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} />
       <SearchFilter searchTerm={searchTerm} onChange={handleSearchTermChange} />
       <EntryForm
         onSubmit={handleSubmitForm}
