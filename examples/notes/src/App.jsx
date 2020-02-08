@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import shortid from 'shortid';
 
 import notesService from './services/notes';
 import Note from './components/Note';
+import Notification from './components/Notification';
+
+import './index.css';
 
 const App = () => {
   useEffect(() => {
@@ -17,6 +19,7 @@ const App = () => {
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState('add a new note...');
   const [showAll, setShowAll] = useState(true);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const notesToShow = showAll
     ? notes
@@ -25,12 +28,19 @@ const App = () => {
 
   const rows = () => {
     return notesToShow.map(note =>
-      <Note
+      <Note        
         key={note.id}
         note={note} 
         toggleImportance={toggleImportanceOf(note.id)}
       />
     )
+  }
+
+  const showError = (message) => {
+    setError(message);
+    setTimeout(() => {
+      setErrorMessage(null);
+    }, 2000);
   }
 
   const toggleImportanceOf = (id) => async () => {
@@ -40,8 +50,8 @@ const App = () => {
       const response = await notesService.update(changedNote);
       setNotes(notes.map(n => (n.id !== id) ? n : response));
     } catch (e) {
-      console.error('e', e);
-      alert(`the note '${note.content}' was already deleted from the server`);
+      console.error('e', e);      
+      showError(`the note '${note.content}' was already deleted from the server`);
       setNotes(notes.filter(n => n.id !== id));
     }
   };
@@ -76,6 +86,7 @@ const App = () => {
   return (
     <div>
       <h1>Notes</h1>
+      <Notification message={errorMessage} />
       <div>
         <button onClick={onClickShowAll}>{showAll ? 'important' : 'all'}</button>
       </div>
