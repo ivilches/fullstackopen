@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios';
+import shortid from 'shortid';
 
 import SearchFilter from './components/SearchFilter';
 import EntryForm from './components/EntryForm';
 import EntryList from './components/EntryList';
-const shortid = require('shortid');
+import entriesService from './services/entries';
 
-const backendPersonsUrl = 'http://localhost:3001/persons'
 
 const App = () => {
   const [entries, setEntries] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
-      const result = await axios.get(backendPersonsUrl);
-      setEntries(result.data);
+      const result = await entriesService.getAll();
+      setEntries(result);
     };
     fetchData();
   }, []);
@@ -45,7 +44,7 @@ const App = () => {
       number: newNumber,
     };
 
-    await axios.post(backendPersonsUrl, newEntry);    
+    await entriesService.create(newEntry);
     setEntries(entries.concat(newEntry));
 
     setNewName('');
