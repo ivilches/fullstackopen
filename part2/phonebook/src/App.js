@@ -9,11 +9,11 @@ const shortid = require('shortid');
 const backendPersonsUrl = 'http://localhost:3001/persons'
 
 const App = () => {
-  const [persons, setPersons] = useState([]);
+  const [entries, setEntries] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
       const result = await axios.get(backendPersonsUrl);
-      setPersons(result.data);
+      setEntries(result.data);
     };
     fetchData();
   }, []);
@@ -22,13 +22,13 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const personsToShow = persons.filter(
+  const entriesToShow = entries.filter(
     p => p.name.toLowerCase()
       .includes(searchTerm.toLowerCase()));
 
-  const existsNameInPhoneBook = (name) => persons.some(p => p.name === name.trim());
+  const existsNameInPhoneBook = (name) => entries.some(p => p.name === name.trim());
 
-  const handleSubmitForm = (event) => {
+  const handleSubmitForm = async (event) => {
     event.preventDefault();
     if (newName.trim() === '') {
       return;
@@ -39,11 +39,14 @@ const App = () => {
       return;
     }
 
-    setPersons(persons.concat({
+    const newEntry = {
       id: shortid.generate(),
       name: newName,
       number: newNumber,
-    }));
+    };
+
+    await axios.post(backendPersonsUrl, newEntry);    
+    setEntries(entries.concat(newEntry));
 
     setNewName('');
     setNewNumber('');
@@ -73,7 +76,7 @@ const App = () => {
         onChangeNewNumber={handleNewNumberChange}
       />
       <h2>Numbers</h2>
-      <EntryList persons={personsToShow} />
+      <EntryList persons={entriesToShow} />
     </div>
   )
 }
