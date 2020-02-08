@@ -4,7 +4,6 @@ import shortid from 'shortid';
 import SearchFilter from './components/SearchFilter';
 import EntryForm from './components/EntryForm';
 import EntryList from './components/EntryList';
-import Entry from './components/Entry';
 import entriesService from './services/entries';
 
 
@@ -28,6 +27,16 @@ const App = () => {
 
   const existsNameInPhoneBook = (name) => entries.some(p => p.name === name.trim());
 
+  const updateEntry = async (entry) => {
+    try {
+      await entriesService.update(entry);
+      const entriesWithoutUpdatedOne = entries.filter(e => e.id !== entry.id);
+      setEntries(entriesWithoutUpdatedOne.concat(entry));
+    } catch (error) {
+      console.error(error);
+    }    
+  }
+
   const handleSubmitForm = async (event) => {
     event.preventDefault();
     if (newName.trim() === '') {
@@ -35,8 +44,11 @@ const App = () => {
     }
 
     if (existsNameInPhoneBook(newName)) {
-      alert(`${newName} is already added to phonebook`);
-      return;
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        const entry = entries.find(e => e.name === newName);        
+        updateEntry({...entry, number: newNumber});
+        return;
+      }
     }
 
     const newEntry = {

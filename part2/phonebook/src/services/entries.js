@@ -10,12 +10,16 @@ const getAll  = async () => {
 const create = async (entry) =>
   await axios.post(baseUrl, entry);
 
+const update = async (entry) => 
+  await axios.put(`${baseUrl}/${entry.id}`, entry);
+
 const remove = async (id) =>
   await axios.delete(`${baseUrl}/${id}`);
 
 export default {
   getAll,
   create,
+  update,
   remove,
 }
   
