@@ -1,5 +1,4 @@
-const persons = {
-  "persons": [
+const persons = [
     {
       "name": "Arto Hellas",
       "number": "040-123456",
@@ -20,8 +19,7 @@ const persons = {
       "number": "39-23-6423122",
       "id": 4
     }
-  ]
-}
+  ];
 
 module.exports = {
   persons,
