@@ -1,7 +1,9 @@
 const express = require('express');
+const shortid = require('shortid');
 const bodyParser = require('body-parser');
 
 const app = express();
+app.use(bodyParser.json());
 
 let persons = require('./persons').persons;
 
@@ -28,6 +30,48 @@ app.get('/api/persons/:id', (req, res) => {
   const person = persons.find(p => p.id === id);
   res.send(JSON.stringify(person));
 });
+
+app.post('/api/persons', (req, res) => {
+  const body = req.body;
+  const validatorResult = personValidator(body);
+  console.log('validator', validatorResult);
+
+  if (!validatorResult.isValid) {
+    return res.status(400).json({
+      errors: validatorResult.errors.join(', ')
+    })
+  }
+
+  const newPerson = {
+    name: body.name,
+    number: body.number,
+    id: shortid.generate()
+  };
+
+  persons = persons.concat(newPerson);
+
+  res.status(201).json(newPerson);
+});
+
+const personValidator = (person) => {
+  console.log('person', person)
+  const result = {
+    isValid: true,
+    errors: []
+  };
+
+  if (!person.name.trim() === '') {
+    result.isValid = false;
+    result.errors = result.errors.concat('name must not be empty');
+  }
+
+  if (!person.number) {
+    result.isValid = false;
+    result.errors = result.errors.concat('number must not be empty');
+  }
+
+  return result;
+}
 
 app.delete('/api/persons/:id', (req, res) => {
   const id = Number(req.params.id);
