@@ -54,13 +54,13 @@ app.post('/api/persons', (req, res) => {
 });
 
 const personValidator = (person) => {
-  console.log('person', person)
   const result = {
     isValid: true,
     errors: []
   };
 
-  if (!person.name.trim() === '') {
+  if (person.name.trim() === '') {
+    console.log('valid', person.name.trim())
     result.isValid = false;
     result.errors = result.errors.concat('name must not be empty');
   }
@@ -70,13 +70,18 @@ const personValidator = (person) => {
     result.errors = result.errors.concat('number must not be empty');
   }
 
+  if (existsPersonByName(person.name)) {
+    result.isValid = false;
+    result.errors = result.errors.concat('name already exists in the phonebook');
+  }
+
   return result;
 }
 
 app.delete('/api/persons/:id', (req, res) => {
   const id = Number(req.params.id);
 
-  if (!existsPerson(id)) {
+  if (!existsPersonById(id)) {
     return res.status(404).json({
       error: 'person not found',
     })
@@ -86,7 +91,8 @@ app.delete('/api/persons/:id', (req, res) => {
   res.status(204).end();
 });
 
-const existsPerson = (id) => persons.some(p => p.id === id);
+const existsPersonById = (id) => persons.some(p => p.id === id);
+const existsPersonByName = (name) => persons.some(p => p.name === name);
 
 const PORT = 3001;
 app.listen(PORT, () => {
