@@ -1,9 +1,23 @@
 const express = require('express');
-const shortid = require('shortid');
 const bodyParser = require('body-parser');
+const shortid = require('shortid');
+const morgan = require('morgan');
 
 const app = express();
 app.use(bodyParser.json());
+
+const logFormat = (tokens, req, res) => [
+  tokens.method(req, res),
+  tokens.url(req, res),
+  tokens.status(req, res),
+  tokens.res(req, res, 'content-length'), '-',  
+  tokens['response-time'](req, res), 'ms',
+  JSON.stringify(req.body),
+].join(' ');
+
+app.use(morgan(logFormat, {
+  skip: (req, res) => req.method !== 'POST',
+}));
 
 let persons = require('./persons').persons;
 
@@ -34,7 +48,6 @@ app.get('/api/persons/:id', (req, res) => {
 app.post('/api/persons', (req, res) => {
   const body = req.body;
   const validatorResult = personValidator(body);
-  console.log('validator', validatorResult);
 
   if (!validatorResult.isValid) {
     return res.status(400).json({
@@ -60,7 +73,6 @@ const personValidator = (person) => {
   };
 
   if (person.name.trim() === '') {
-    console.log('valid', person.name.trim())
     result.isValid = false;
     result.errors = result.errors.concat('name must not be empty');
   }
