@@ -108,7 +108,7 @@ app.delete('/api/persons/:id', (req, res) => {
 const existsPersonById = (id) => persons.some(p => p.id === id);
 const existsPersonByName = (name) => persons.some(p => p.name === name);
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running in port ${PORT}`);
 })
